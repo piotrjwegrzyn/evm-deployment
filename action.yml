@@ -1,16 +1,16 @@
-name: "Deploy EVM smart contract"
-description: "Deploy and verify a smart contract on any EVM chain"
-author: "Yacine Badiss"
+name: 'EVM smart contract deployment'
+description: 'Deploy and verify a smart contract on any EVM chain'
+author: 'Piotr Węgrzyn <piotr@wegrzyn.dev>'
 branding:
-  icon: arrow-up-circle
-  color: blue
+  icon: 'arrow-up-circle'
+  color: 'orange'
 
 inputs:
   contract-name:
     description: "Name of the contract to deploy. Must be the name of the main sol file."
     required: true
   parent-dir:
-    description: "Parent directory of `src` and `out`."
+    description: "Parent directory of source files and `out`."
     required: true
     default: "."
   chain-id:
@@ -29,7 +29,7 @@ inputs:
   verify:
     description: "Whether we must verify the contract or not on etherscan. If set to `true`, `etherscan-url` and `etherscan-api-key` are required."
     required: false
-    default: "false"
+    default: false
   etherscan-url:
     description: "URL of the etherscan endpoint to use for verification and reporting."
     required: false
@@ -63,8 +63,7 @@ runs:
       uses: foundry-rs/foundry-toolchain@v1
     - name: Build contract
       run: |
-        cd ${{ inputs.parent-dir }}
-        forge build
+        forge build ${{ inputs.parent-dir }} --out ${{ inputs.parent-dir }}/out/ --skip 'test.sol'
       shell: bash
     - name: Deploy contract
       id: deploy
@@ -72,8 +71,7 @@ runs:
         ETHERSCAN_URL: ${{ inputs.etherscan-url }}
         ETHERSCAN_API_KEY: ${{ inputs.etherscan-api-key }}
       run: |
-        cd ${{ inputs.parent-dir }}
-        createArguments="src/${{ inputs.contract-name }}.sol:${{ inputs.contract-name }} --retries 10 --json --rpc-url=${{ inputs.rpc-url }} --private-key=${{ inputs.deployer-pk }}"
+        createArguments="${{ inputs.parent-dir }}/${{ inputs.contract-name }}.sol:${{ inputs.contract-name }} --retries 10 --json --rpc-url=${{ inputs.rpc-url }} --private-key=${{ inputs.deployer-pk }}"
         if [[ "${{ inputs.verify }}" == "true" ]]; then
           createArguments="${createArguments} --verify"
         fi
