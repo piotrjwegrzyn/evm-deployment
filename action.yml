@@ -45,15 +45,6 @@ outputs:
 runs:
   using: "composite"
   steps:
-    - name: Check values
-      run: |
-        if [[ "${{ inputs.verify }}" == "true" ]]; then
-          if [[ "${{ inputs.etherscan-url }}" == "" || "${{ inputs.etherscan-api-key }}" == "" ]]; then
-            echo "Missing `etherscan-url` and `etherscan-api-key` required for verification."
-            exit 1
-          fi
-        fi
-      shell: bash
     - name: Install Foundry
       uses: foundry-rs/foundry-toolchain@v1
     - name: Install jq
