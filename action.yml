@@ -88,7 +88,7 @@ runs:
         deploymentOutput=`echo "${createOutput}" | head -1`
         echo "deploymentOutput=${deploymentOutput}" >> $GITHUB_OUTPUT
         abi=$(eval "cat ${{ inputs.parent-dir }}/out/${{ inputs.contract-filename }}.sol/${{ inputs.contract-name }}.json | jq -r '.abi'")
-        address=$(eval "echo "\$dupa" | jq -r '.deployedTo'")
+        address=$(eval "echo "\$deploymentOutput" | jq -r '.deployedTo'")
         echo "{\"contract_abi\": $abi, \"contract_address\": \"$address\"}" >> ${{ inputs.parent-dir }}/out/${{ inputs.contract-connector }}.json
       shell: bash
     - name: Upload ABI artifact
