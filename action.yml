@@ -7,7 +7,10 @@ branding:
 
 inputs:
   contract-name:
-    description: "Name of the contract to deploy. Must be the name of the main sol file."
+    description: "Name of the contract to deploy."
+    required: true
+  contract-filename:
+    description: "Name of the sol file with contract to deploy."
     required: true
   parent-dir:
     description: "Parent directory of source files and `out`."
@@ -71,7 +74,7 @@ runs:
         ETHERSCAN_URL: ${{ inputs.etherscan-url }}
         ETHERSCAN_API_KEY: ${{ inputs.etherscan-api-key }}
       run: |
-        createArguments="${{ inputs.parent-dir }}/${{ inputs.contract-name }}.sol:${{ inputs.contract-name }} --retries 10 --json --rpc-url=${{ inputs.rpc-url }} --private-key=${{ inputs.deployer-pk }}"
+        createArguments="${{ inputs.parent-dir }}/${{ inputs.contract-filename }}.sol:${{ inputs.contract-name }} --retries 10 --json --rpc-url=${{ inputs.rpc-url }} --private-key=${{ inputs.deployer-pk }}"
         if [[ "${{ inputs.verify }}" == "true" ]]; then
           createArguments="${createArguments} --verify"
         fi
@@ -87,7 +90,7 @@ runs:
       uses: actions/upload-artifact@v3
       with:
         name: ${{ inputs.contract-name }}.abi.json
-        path: ${{ inputs.parent-dir }}/out/${{ inputs.contract-name }}.sol/${{ inputs.contract-name }}.json
+        path: ${{ inputs.parent-dir }}/out/${{ inputs.contract-filename }}.sol/${{ inputs.contract-name }}.json
     - name: Log summary of deployment
       id: summary
       run: |
