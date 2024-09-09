@@ -92,12 +92,12 @@ runs:
         echo "{\"contract_abi\": $abi, \"contract_address\": \"$address\"}" >> ${{ inputs.parent-dir }}/out/${{ inputs.contract-connector }}.json
       shell: bash
     - name: Upload ABI artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: ${{ inputs.contract-name }}.abi.json
         path: ${{ inputs.parent-dir }}/out/${{ inputs.contract-filename }}.sol/${{ inputs.contract-name }}.json
     - name: Upload contract connector
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: ${{ inputs.contract-connector }}.json
         path: ${{ inputs.parent-dir }}/out/${{ inputs.contract-connector }}.json
