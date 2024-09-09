@@ -30,9 +30,17 @@ inputs:
     required: false
     default: ""
   verify:
-    description: "Whether we must verify the contract or not on etherscan."
+    description: "Whether we must verify the contract or not on etherscan. If set to `true`, `etherscan-url` and `etherscan-api-key` are required."
     required: false
     default: false
+  etherscan-url:
+    description: "URL of the etherscan endpoint to use for verification and reporting."
+    required: false
+    default: ""
+  etherscan-api-key:
+    description: "API key used for verification."
+    required: false
+    default: ""
 outputs:
   contract-address:
     description: "Address the contract was deployed to"
@@ -45,6 +53,15 @@ outputs:
 runs:
   using: "composite"
   steps:
+    - name: Check values
+      run: |
+        if [[ "${{ inputs.verify }}" == "true" ]]; then
+          if [[ "${{ inputs.etherscan-url }}" == "" || "${{ inputs.etherscan-api-key }}" == "" ]]; then
+            echo "Missing `etherscan-url` and `etherscan-api-key` required for verification."
+            exit 1
+          fi
+        fi
+      shell: bash
     - name: Install Foundry
       uses: foundry-rs/foundry-toolchain@v1
     - name: Install jq
@@ -55,6 +72,9 @@ runs:
       shell: bash
     - name: Deploy contract
       id: deploy
+      env:
+        ETHERSCAN_URL: ${{ inputs.etherscan-url }}
+        ETHERSCAN_API_KEY: ${{ inputs.etherscan-api-key }}
       run: |
         createArguments="${{ inputs.parent-dir }}/${{ inputs.contract-filename }}.sol:${{ inputs.contract-name }} --retries 10 --json --rpc-url=${{ inputs.rpc-url }} --private-key=${{ inputs.deployer-pk }}"
         if [[ "${{ inputs.verify }}" == "true" ]]; then
